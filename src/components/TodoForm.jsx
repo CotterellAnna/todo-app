@@ -19,7 +19,7 @@ function TodoForm(){
     const addTask = async(e) => {
         e.preventDefault()
         try {
-            const docRef = await addDoc(collection(db, "tasks"), {
+            await addDoc(collection(db, "tasks"), {
                 title: task,
                 isDone: false
             });

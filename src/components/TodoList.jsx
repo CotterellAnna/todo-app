@@ -12,9 +12,6 @@ function TodoList(){
     useEffect(()=>{
         const getTaskList = async ()=>{
         try {
-            // const data = await getDocs(taskListRef);
-            // const filteredData = data.docs.map((doc)=>({...doc.data(), id: doc.id}))
-            // setTaskList(filteredData);
 
             await onSnapshot(taskListRef, (snapshot) => {
                 const filteredData = snapshot.docs.map((doc)=>({...doc.data(), id: doc.id}));

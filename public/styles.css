@@ -39,7 +39,7 @@ input:focus{
 }
 
 .form-check-input:checked[type=checkbox] {
-    --bs-form-check-bg-image: url("./images/check2.svg")!important;
+    --bs-form-check-bg-image: url("/images/check2.svg")!important;
     background-color: transparent!important;
     border-color: #B3B1B1!important;
 }
