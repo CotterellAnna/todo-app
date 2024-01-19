@@ -1,0 +1,58 @@
+body{
+    background-color: #3F72AF!important;
+    overflow: hidden;
+}
+
+.App{
+    background-color: #ffffff;
+    max-width: 50em!important;
+    min-height: 90vh;
+    overflow-y: scroll;
+}
+
+.todo_list{
+    margin: auto;
+}
+
+.item{
+    background-color: #DCE2EF;
+}
+
+.delete-btn-container{
+    transition: transform 0.3s ease-in-out;
+}
+
+.delete-btn-container:hover{
+    transform: scale(1.2);
+}
+
+input:focus{
+    box-shadow: none !important;
+}
+
+.form-check-input[type=checkbox] {
+    background-color: transparent!important;
+    border-color: #B3B1B1!important;
+    border-width: 2px;
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.form-check-input:checked[type=checkbox] {
+    --bs-form-check-bg-image: url("./images/check2.svg")!important;
+    background-color: transparent!important;
+    border-color: #B3B1B1!important;
+}
+
+#task{
+    background-color: #DCE2EF!important;
+}
+
+#add_task{
+    background-color: #3F72AF;
+    border-color: #3F72AF!important;
+}
+
+form.container{
+    border-bottom: #B3B1B1 2px solid;
+}
