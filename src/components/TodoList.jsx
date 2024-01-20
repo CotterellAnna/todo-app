@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import TodoItem from "./TodoItem";
 
 import { db } from './firebase'
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 function TodoList(){
 
@@ -13,10 +13,10 @@ function TodoList(){
         const getTaskList = async ()=>{
         try {
 
-            await onSnapshot(taskListRef, (snapshot) => {
-                const filteredData = snapshot.docs.map((doc)=>({...doc.data(), id: doc.id}));
-                setTaskList(filteredData)
-            } )
+            const tasksQuery = query(taskListRef, orderBy('createdAt', 'asc'))
+            const querySnapshot = await getDocs(tasksQuery)
+            const filteredData = querySnapshot.docs.map((doc)=>({...doc.data(), id: doc.id}))
+            setTaskList(filteredData)
 
         } catch (error) {
             console.log(error);

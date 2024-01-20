@@ -3,7 +3,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
 import { useState } from 'react';
 import { db } from './firebase';
 
@@ -21,7 +21,8 @@ function TodoForm(){
         try {
             await addDoc(collection(db, "tasks"), {
                 title: task,
-                isDone: false
+                isDone: false,
+                createdAt: serverTimestamp()
             });
             setTask("")
         } catch (error) {
@@ -45,7 +46,7 @@ function TodoForm(){
                             value={task}
                             onChange={handleInputChange}
                         />
-                        <Button id='add_task' className="mb-2 rounded-end">
+                        <Button type='submit' id='add_task' className="mb-2 rounded-end">
                             <i className="bi bi-plus-lg"></i>
                         </Button>
                     </InputGroup>
