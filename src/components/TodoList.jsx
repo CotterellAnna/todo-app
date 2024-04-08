@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
 import TodoItem from "./TodoItem";
-
 import { db } from './firebase'
-import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { getDoc, doc } from 'firebase/firestore';
+import { useUser } from './UserContext';
 
 function TodoList(){
 
+    const { userId } = useUser();
     const [taskList, setTaskList] = useState([]);
-    const taskListRef = collection(db, "tasks");
 
     useEffect(()=>{
         const getTaskList = async ()=>{
         try {
 
-            const tasksQuery = query(taskListRef, orderBy('createdAt', 'asc'))
-            const querySnapshot = await getDocs(tasksQuery)
-            const filteredData = querySnapshot.docs.map((doc)=>({...doc.data(), id: doc.id}))
+            const userDocRef = doc(db, 'users', userId);
+            const userSnap = await getDoc(userDocRef);
+            const filteredData = userSnap.data().tasks.map((doc)=>({...doc, id:doc.id}))
             setTaskList(filteredData)
 
         } catch (error) {
@@ -32,7 +32,7 @@ function TodoList(){
                         key={task.id}
                         id= {task.id}
                         value = {task.title}
-                        isDone = {task.isDone}
+                        completed = {task.completed}
                     />
             ))}
         </div>

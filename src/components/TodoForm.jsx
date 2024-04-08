@@ -3,7 +3,8 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
+import { collection, getDoc, updateDoc, doc, addDoc } from "firebase/firestore"; 
+import { useUser } from './UserContext';
 import { useState } from 'react';
 import { db } from './firebase';
 
@@ -11,6 +12,8 @@ import { db } from './firebase';
 
 function TodoForm(){
     const [task, setTask] = useState("");
+    const { userId } = useUser();
+
 
     const handleInputChange = (e) =>{
         setTask(e.target.value);
@@ -18,16 +21,29 @@ function TodoForm(){
 
     const addTask = async(e) => {
         e.preventDefault()
-        try {
-            await addDoc(collection(db, "tasks"), {
-                title: task,
-                isDone: false,
-                createdAt: serverTimestamp()
-            });
-            setTask("")
-        } catch (error) {
-            console.log(error);
-        }
+
+        
+        if (task.trim().length !== 0){
+            try {
+                const userDocRef = doc(db, 'users', userId);
+                const userSnap = await getDoc(userDocRef);
+                const currentTasks = userSnap.data().tasks;
+
+                const newTask = {
+                    title: task,
+                    complete: false
+                }
+
+                const newTaskRef = await addDoc(collection(userDocRef, 'tasks'), newTask);         
+                const newTaskId = newTaskRef.id;
+            
+                const newTasks = [...currentTasks, { id: newTaskId, ...newTask }];
+                await updateDoc(userDocRef, { tasks: newTasks });
+                setTask("")
+            } catch (error) {
+                console.log(error);
+            }
+        }  
     }
 
     return(

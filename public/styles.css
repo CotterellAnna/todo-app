@@ -56,3 +56,8 @@ input:focus{
 form.container{
     border-bottom: #B3B1B1 2px solid;
 }
+
+.btn-primary{
+    background-color: #3F72AF!important;
+    outline: none!important;
+}

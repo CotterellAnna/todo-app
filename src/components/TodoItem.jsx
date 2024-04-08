@@ -4,11 +4,13 @@ import Col from 'react-bootstrap/Col';
 import { useState } from 'react';
 import { InputGroup } from 'react-bootstrap';
 import { db } from './firebase';
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { useUser } from './UserContext';
 
 function TodoItem(props){
-    const [isChecked, setIsChecked] = useState(props.isDone)
-
+    const [isChecked, setIsChecked] = useState(props.complete)
+    const {userId} = useUser();
+    
     const handleChange = ()=>{
         setIsChecked(!isChecked);
         updateTask(!isChecked)
@@ -16,10 +18,20 @@ function TodoItem(props){
 
     const updateTask = async(newStatus)=>{
         try {
-            const taskDocRef = doc(db, "tasks", props.id)
-            await updateDoc(taskDocRef, {
-                isDone: newStatus
-            })
+            const userDocRef = doc(db, 'users', userId);
+            const userSnap = await getDoc(userDocRef);
+            const tasks = userSnap.data().tasks
+
+            const taskIndex = tasks.findIndex(task => task.id === props.id);
+
+            if (taskIndex !== -1) {
+                // Update the task at the found index with the updated task
+                tasks[taskIndex] = { ...tasks[taskIndex], complete : newStatus };
+            
+                // Update the tasks array in the user's document
+                await updateDoc(userDocRef, { tasks });
+              }
+
         } catch (error) {
             console.log(error);
         }
@@ -27,7 +39,13 @@ function TodoItem(props){
 
     const deleteTask = async()=>{
         try {
-            await deleteDoc(doc(db, "tasks", props.id))
+            const userDocRef = doc(db, 'users', userId);
+            const userSnap = await getDoc(userDocRef);
+            const tasks = userSnap.data().tasks
+            const newTasks = tasks.filter(task => task.id !== props.id);
+
+            await updateDoc(userDocRef, {tasks: newTasks})
+
         } catch (error) {
             console.log(error);
         }
@@ -40,7 +58,7 @@ function TodoItem(props){
                     <Form.Check
                         onChange= {handleChange}
                         type='checkbox'
-                        checked={props.isDone}
+                        checked={props.complete}
                         id={props.id}
                     />
                     <label

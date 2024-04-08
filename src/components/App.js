@@ -1,18 +1,25 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Header from './Header';
-import TodoForm from './TodoForm';
-import TodoList from './TodoList';
+import { UserProvider } from './UserContext';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Signup from './Signup';
+import Login from './Login';
+import TodoApp from './TodoApp';
 
 
 function App() {
   
 
   return (
-    <div className="App rounded container mx -auto my-3 p-2">
-      <Header />
-      <TodoForm />
-      <TodoList />
-    </div>
+    <Router>
+      <UserProvider>
+        <Routes>
+          <Route path='/Signup' element = {<Signup />} />
+          <Route path='/login' element = {<Login />} />
+          <Route path='/todoApp' element = {<TodoApp />} />
+        </Routes>
+      </UserProvider>
+    </Router>
+
   );
 }
 
