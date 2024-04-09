@@ -137,7 +137,7 @@ function Signup(){
                     <button className='btn btn-primary' type='submit' onClick={signIn}>Sign In</button>
                 </div>
                 <div className='form-floating mb-3'>
-                    Already have an account? <a href='./Login'>Login</a>
+                    Already have an account? <button type='button' className='text-primary bg-transparent border border-0' onClick={()=>{navigate('/login')}}>Login</button>
                 </div>
             </form>
             

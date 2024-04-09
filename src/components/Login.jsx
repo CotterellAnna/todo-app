@@ -79,7 +79,7 @@ function Login(){
                     <button className='btn btn-primary' type='submit' onClick={handleLogIn}>Log In</button>
                 </div>
                 <div className='form-floating mb-3'>
-                    Don't have an account? <a href='./Signup'>Signup</a>
+                    Don't have an account? <button type='button' className='text-primary bg-transparent border border-0' onClick={()=>{navigate('/')}}>Signup</button>
                 </div>
             </form>
             
