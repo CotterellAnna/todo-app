@@ -89,20 +89,16 @@ function Signup(){
                     })
                     .catch((err)=>{
                         setErrorMessage(handleError(err.message));
-                            setSpinner("d-none");
-                            setSigninText("");
                     })
                 })
                 .catch((err)=>{
                     setErrorMessage(handleError(err.message));
-                    setSpinner("d-none");
-                    setSigninText("");
                 })
         }catch(err){
             setErrorMessage(handleError(err.message));
-            setSpinner("d-none");
-            setSigninText("");
         }
+        setSpinner("d-none");
+        setSigninText("");
     }
 
     // signIn with google

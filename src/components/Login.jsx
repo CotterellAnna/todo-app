@@ -48,16 +48,14 @@ function Login(){
             })
             .catch((err)=>{
                 setErrorMessage(handleError(err.message));
-                setSpinner("d-none");
-                setLoginText("")
 
             })
         }catch(err){
             setErrorMessage(handleError(err.message));
-            setSpinner("d-none");
-            setLoginText("")
         }
-        
+
+        setSpinner("d-none");
+        setLoginText("")
     }
 
 

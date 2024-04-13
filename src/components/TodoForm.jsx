@@ -13,6 +13,8 @@ import { db } from './firebase';
 function TodoForm(){
     const [task, setTask] = useState("");
     const { userId } = useUser();
+    const [ spinner, setSpinner ] = useState("d-none");
+    const [ addBtn, setAddBtn] = useState("");
 
 
     const handleInputChange = (e) =>{
@@ -21,7 +23,8 @@ function TodoForm(){
 
     const addTask = async(e) => {
         e.preventDefault()
-
+        setSpinner("");
+        setAddBtn("d-none");
         
         if (task.trim().length !== 0){
             try {
@@ -44,6 +47,9 @@ function TodoForm(){
                 console.log(error);
             }
         }  
+
+        setSpinner("d-none");
+        setAddBtn("");
     }
 
     return(
@@ -63,7 +69,10 @@ function TodoForm(){
                             onChange={handleInputChange}
                         />
                         <Button type='submit' id='add_task' className="mb-2 rounded-end">
-                            <i className="bi bi-plus-lg"></i>
+                            <span className={`${addBtn}`}><i className="bi bi-plus-lg"></i></span>
+                            <div className={`spinner-border spinner-border-sm text-light ${spinner}`} role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
                         </Button>
                     </InputGroup>
                 </Col>
