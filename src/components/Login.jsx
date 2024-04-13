@@ -4,7 +4,7 @@ import { useUser } from './UserContext';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { auth } from './firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import Swal from 'sweetalert2';
 
 
@@ -28,32 +28,38 @@ function Login(){
         }
     };
 
-    const handleLogIn = async(e)=>{
+    const handleLogIn = (e)=>{
         e.preventDefault()
 
         setSpinner("");
         setLoginText("d-none");
 
-        try{
-            await signInWithEmailAndPassword(auth, email, password)
-            .then((cred)=>{
-                Swal.fire({
-                    icon: "success",
-                    text: "Login successful",
-                    confirmButtonColor: "#3F72AF"
-                })
-                const user = cred.user;
-                setUserId(user.uid);
-                navigate('/TodoApp')
+        setPersistence(auth, browserSessionPersistence)
+            .then(async()=>{
+                try{
+                    await signInWithEmailAndPassword(auth, email, password)
+                    .then((cred)=>{
+                        Swal.fire({
+                            icon: "success",
+                            text: "Login successful",
+                            confirmButtonColor: "#3F72AF"
+                        })
+                        const user = cred.user;
+                        setUserId(user.uid);
+                        navigate('/TodoApp')
+                    })
+                    .catch((err)=>{
+                        setErrorMessage(handleError(err.message));
+        
+                    })
+                }catch(err){
+                    setErrorMessage(handleError(err.message));
+                }
             })
             .catch((err)=>{
-                setErrorMessage(handleError(err.message));
-
+                console.log(err)
             })
-        }catch(err){
-            setErrorMessage(handleError(err.message));
-        }
-
+        
         setSpinner("d-none");
         setLoginText("")
     }

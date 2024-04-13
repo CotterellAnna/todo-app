@@ -3,7 +3,7 @@ import Header from './Header';
 import { useUser } from './UserContext';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider, db} from './firebase';
-import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, setPersistence, inMemoryPersistence, browserSessionPersistence } from 'firebase/auth';
 import { useState } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Swal from "sweetalert2";
@@ -67,67 +67,77 @@ function Signup(){
     };
 
     // signIn with email and password
-    const signIn = async(e)=>{
+    const signIn = (e)=>{
         e.preventDefault()
 
         setSpinner("");
         setSigninText("d-none");
 
-        try{
-            await createUserWithEmailAndPassword(auth, email, password)
-                .then((cred)=>{
-                    checkOrCreateUserList(cred.user.uid)
-                    .then(()=>{
-                        setEmail("")
-                        setPassword("")
-                        setUserId(cred.user.uid)
-                        Swal.fire({
-                            icon: "success",
-                            text: "Sign In successful",        
-                            confirmButtonColor: "#3F72AF"
+        setPersistence(auth, browserSessionPersistence)
+            .then(async()=>{
+                try{
+                    await createUserWithEmailAndPassword(auth, email, password)
+                        .then((cred)=>{
+                            checkOrCreateUserList(cred.user.uid)
+                            .then(()=>{
+                                setEmail("")
+                                setPassword("")
+                                setUserId(cred.user.uid)
+                                Swal.fire({
+                                    icon: "success",
+                                    text: "Sign In successful",        
+                                    confirmButtonColor: "#3F72AF"
+                                })
+                            })
+                            .catch((err)=>{
+                                setErrorMessage(handleError(err.message));
+                            })
                         })
-                    })
-                    .catch((err)=>{
-                        setErrorMessage(handleError(err.message));
-                    })
-                })
-                .catch((err)=>{
+                        .catch((err)=>{
+                            setErrorMessage(handleError(err.message));
+                        })
+                }catch(err){
                     setErrorMessage(handleError(err.message));
-                })
-        }catch(err){
-            setErrorMessage(handleError(err.message));
-        }
+                }
+            })
+
+        
         setSpinner("d-none");
         setSigninText("");
     }
 
     // signIn with google
-    const signInWithGoogle = async(e)=>{
+    const signInWithGoogle = (e)=>{
         e.preventDefault();
-        try{
-            signInWithPopup(auth, googleProvider)
-                .then((cred)=>{
-                    checkOrCreateUserList(cred.user.uid)
-                    Swal.fire({
-                        icon: "success",
-                        text: "Sign In successful",        
-                        confirmButtonColor: "#3F72AF"
-                    })
-                    .then(()=>{
-                        setEmail("")
-                        setPassword("")
-                        setUserId(cred.user.uid)
-                    })
-                    .catch((err)=>{
-                        setErrorMessage(handleError(err.message));
-                    })
-                })
-                .catch((err)=>{
+
+        setPersistence(auth, inMemoryPersistence)
+            .then(async()=>{
+                try{
+                    signInWithPopup(auth, googleProvider)
+                        .then((cred)=>{
+                            checkOrCreateUserList(cred.user.uid)
+                            Swal.fire({
+                                icon: "success",
+                                text: "Sign In successful",        
+                                confirmButtonColor: "#3F72AF"
+                            })
+                            .then(()=>{
+                                setEmail("")
+                                setPassword("")
+                                setUserId(cred.user.uid)
+                            })
+                            .catch((err)=>{
+                                setErrorMessage(handleError(err.message));
+                            })
+                        })
+                        .catch((err)=>{
+                            setErrorMessage(handleError(err.message));
+                        })
+                }catch(err){
                     setErrorMessage(handleError(err.message));
-                })
-        }catch(err){
-            setErrorMessage(handleError(err.message));
-        }
+                }
+            })
+        
     }
 
     return(
