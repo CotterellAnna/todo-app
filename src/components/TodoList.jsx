@@ -17,7 +17,6 @@ function TodoList(){
             const userSnap = await getDoc(userDocRef);
             const filteredData = userSnap.data().tasks.map((doc)=>({...doc, id:doc.id}))
             setTaskList(filteredData)
-
         } catch (error) {
             console.log(error);
         } 

@@ -7,11 +7,13 @@ body{
     background-color: #ffffff;
     max-width: 50em!important;
     min-height: 90vh;
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 
 .todo_list{
     margin: auto;
+    height: 60vh;
+    overflow-y: scroll;
 }
 
 .item{
