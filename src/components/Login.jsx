@@ -5,23 +5,21 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { auth } from './firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import Swal from 'sweetalert2';
+
 
 function Login(){
 
     const navigate = useNavigate();
-
-    // hr line style object
-    // const hrStyle ={
-    //     width: "45%",
-    //     height: "1.5px",
-    //     backgroundColor: "#000000"
-    // }
+    const Swal = require('sweetalert2');
 
     const { setUserId } = useUser();
 
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
     const [errorMessage, setErrorMessage ] = useState("");
+    const [ spinner, setSpinner ] = useState("d-none");
+    const [ loginText, setLoginText] = useState("");
 
 
     const handleError = (errMsg)=>{
@@ -33,19 +31,31 @@ function Login(){
     const handleLogIn = async(e)=>{
         e.preventDefault()
 
+        setSpinner("");
+        setLoginText("d-none");
+
         try{
             await signInWithEmailAndPassword(auth, email, password)
             .then((cred)=>{
+                Swal.fire({
+                    icon: "success",
+                    text: "Login successful",
+                    confirmButtonColor: "#3F72AF"
+                })
                 const user = cred.user;
                 setUserId(user.uid);
                 navigate('/TodoApp')
             })
             .catch((err)=>{
                 setErrorMessage(handleError(err.message));
+                setSpinner("d-none");
+                setLoginText("")
 
             })
         }catch(err){
             setErrorMessage(handleError(err.message));
+            setSpinner("d-none");
+            setLoginText("")
         }
         
     }
@@ -76,24 +86,17 @@ function Login(){
                     {errorMessage}
                 </div>
                 <div className='form-floating mb-3 text-center'>
-                    <button className='btn btn-primary' type='submit' onClick={handleLogIn}>Log In</button>
+                    <button className='btn btn-primary w-25' type='submit' onClick={handleLogIn}> 
+                        <span className={`${loginText}`}>Log In</span>
+                        <div className={`spinner-border spinner-border-sm text-light ${spinner}`} role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
                 </div>
                 <div className='form-floating mb-3'>
                     Don't have an account? <button type='button' className='text-primary bg-transparent border border-0' onClick={()=>{navigate('/')}}>Signup</button>
                 </div>
             </form>
-            
-            {/* <div className='position-relative my-4 text-center'>
-                <hr className='position-absolute start-0' style={hrStyle} />
-                <hr className='position-absolute end-0' style={hrStyle} />
-                <span className='text-center px-3'>
-                    OR
-                </span>
-            </div>
-
-            <div className='text-center'>
-                <button className='btn shadow-lg p-2 px-3' onClick={signInWithGoogle}><i className="bi bi-google me-2"></i> Log In with Google</button>
-            </div> */}
         </div>
     )
 }

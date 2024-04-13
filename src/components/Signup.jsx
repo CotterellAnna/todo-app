@@ -6,10 +6,14 @@ import { auth, googleProvider, db} from './firebase';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { useState } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import Swal from "sweetalert2";
+import TodoApp from './TodoApp';
 
 // login function
 function Signup(){
     const { setUserId } = useUser();
+    const Swal = require('sweetalert2');
+
 
     // hr line style object
     const hrStyle ={
@@ -22,6 +26,8 @@ function Signup(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [ spinner, setSpinner ] = useState("d-none");
+    const [ SigninText, setSigninText] = useState("");
 
 
     // creating navigate for redirecting
@@ -34,7 +40,7 @@ function Signup(){
         }else if( errMsg === "Firebase: Password should be at least 6 characters (auth/weak-password)."){
             return("Password should be at least 6 characters*")
         }
-    }
+    };
 
     // create new user in db
     const createNewListForUser = async(userId)=>{
@@ -44,7 +50,7 @@ function Signup(){
         });
         setUserId(userId);
         navigate('/TodoApp')
-    }
+    };
 
     // check if user exist in db
     const checkOrCreateUserList = async (userId) => {
@@ -63,6 +69,10 @@ function Signup(){
     // signIn with email and password
     const signIn = async(e)=>{
         e.preventDefault()
+
+        setSpinner("");
+        setSigninText("d-none");
+
         try{
             await createUserWithEmailAndPassword(auth, email, password)
                 .then((cred)=>{
@@ -71,16 +81,27 @@ function Signup(){
                         setEmail("")
                         setPassword("")
                         setUserId(cred.user.uid)
+                        Swal.fire({
+                            icon: "success",
+                            text: "Sign In successful",        
+                            confirmButtonColor: "#3F72AF"
+                        })
                     })
                     .catch((err)=>{
                         setErrorMessage(handleError(err.message));
+                            setSpinner("d-none");
+                            setSigninText("");
                     })
                 })
                 .catch((err)=>{
                     setErrorMessage(handleError(err.message));
+                    setSpinner("d-none");
+                    setSigninText("");
                 })
         }catch(err){
             setErrorMessage(handleError(err.message));
+            setSpinner("d-none");
+            setSigninText("");
         }
     }
 
@@ -91,6 +112,11 @@ function Signup(){
             signInWithPopup(auth, googleProvider)
                 .then((cred)=>{
                     checkOrCreateUserList(cred.user.uid)
+                    Swal.fire({
+                        icon: "success",
+                        text: "Sign In successful",        
+                        confirmButtonColor: "#3F72AF"
+                    })
                     .then(()=>{
                         setEmail("")
                         setPassword("")
@@ -134,7 +160,13 @@ function Signup(){
                     {errorMessage}
                 </div>
                 <div className='form-floating mb-3 text-center'>
-                    <button className='btn btn-primary' type='submit' onClick={signIn}>Sign In</button>
+                    <button className='btn btn-primary' type='submit' onClick={signIn}> 
+                        <span className={`${SigninText}`}>Sign In</span>
+                        <div className={`spinner-border spinner-border-sm text-light ${spinner}`} role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </button>
+                    
                 </div>
                 <div className='form-floating mb-3'>
                     Already have an account? <button type='button' className='text-primary bg-transparent border border-0' onClick={()=>{navigate('/login')}}>Login</button>

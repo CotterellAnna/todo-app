@@ -6,10 +6,12 @@ import { InputGroup } from 'react-bootstrap';
 import { db } from './firebase';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { useUser } from './UserContext';
+import Swal from 'sweetalert2';
 
 function TodoItem(props){
     const [isChecked, setIsChecked] = useState(props.complete)
     const {userId} = useUser();
+    const Swal = require("sweetalert2");
     
     const handleChange = ()=>{
         setIsChecked(!isChecked);
@@ -37,18 +39,30 @@ function TodoItem(props){
         }
     }
 
-    const deleteTask = async()=>{
-        try {
-            const userDocRef = doc(db, 'users', userId);
-            const userSnap = await getDoc(userDocRef);
-            const tasks = userSnap.data().tasks
-            const newTasks = tasks.filter(task => task.id !== props.id);
-
-            await updateDoc(userDocRef, {tasks: newTasks})
-
-        } catch (error) {
-            console.log(error);
-        }
+    const deleteTask = ()=>{
+        Swal.fire({
+            icon: "warning",
+            title: "Are you sure?",
+            confirmButtonText: "Delete",
+            confirmButtonColor: "#d33",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            cancelButtonColor: "#3F72AF"
+        }).then(async(result)=>{
+            if(result.isConfirmed){
+                try {
+                    const userDocRef = doc(db, 'users', userId);
+                    const userSnap = await getDoc(userDocRef);
+                    const tasks = userSnap.data().tasks
+                    const newTasks = tasks.filter(task => task.id !== props.id);
+        
+                    await updateDoc(userDocRef, {tasks: newTasks})
+        
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        })      
     }
 
     return(
