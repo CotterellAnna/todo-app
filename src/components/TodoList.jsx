@@ -31,7 +31,7 @@ function TodoList(){
                         key={task.id}
                         id= {task.id}
                         value = {task.title}
-                        completed = {task.completed}
+                        complete = {task.complete}
                     />
             ))}
         </div>
