@@ -3,11 +3,10 @@ import Header from './Header';
 import { useUser } from './UserContext';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider, db} from './firebase';
-import { createUserWithEmailAndPassword, signInWithPopup, setPersistence, inMemoryPersistence, browserSessionPersistence } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, setPersistence, browserSessionPersistence, updateProfile } from 'firebase/auth';
 import { useState } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Swal from "sweetalert2";
-import TodoApp from './TodoApp';
 
 // login function
 function Signup(){
@@ -25,6 +24,7 @@ function Signup(){
     // use state for email, password and error message
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [ spinner, setSpinner ] = useState("d-none");
     const [ SigninText, setSigninText] = useState("");
@@ -78,6 +78,7 @@ function Signup(){
                 try{
                     await createUserWithEmailAndPassword(auth, email, password)
                         .then((cred)=>{
+                            updateProfile(auth.currentUser, {displayName: username});
                             checkOrCreateUserList(cred.user.uid)
                             .then(()=>{
                                 setEmail("")
@@ -85,7 +86,7 @@ function Signup(){
                                 setUserId(cred.user.uid)
                                 Swal.fire({
                                     icon: "success",
-                                    text: "Sign In successful",        
+                                    title: "Sign In successful",        
                                     confirmButtonColor: "#3F72AF"
                                 })
                             })
@@ -110,7 +111,7 @@ function Signup(){
     const signInWithGoogle = (e)=>{
         e.preventDefault();
 
-        setPersistence(auth, inMemoryPersistence)
+        setPersistence(auth, browserSessionPersistence)
             .then(async()=>{
                 try{
                     signInWithPopup(auth, googleProvider)
@@ -118,7 +119,7 @@ function Signup(){
                             checkOrCreateUserList(cred.user.uid)
                             Swal.fire({
                                 icon: "success",
-                                text: "Sign In successful",        
+                                title: "Sign In successful",        
                                 confirmButtonColor: "#3F72AF"
                             })
                             .then(()=>{
@@ -145,7 +146,15 @@ function Signup(){
         <div className="App rounded container mx -auto my-3 p-2">
             <Header />
             <form className='my-3'>
-                
+                <div className="form-floating mb-3">
+                    <input required type="text" className="form-control" id="username" placeholder="" 
+                        onChange={(e)=>{
+                            setUsername(e.target.value)
+                        }}
+                    />
+                    <label htmlFor="username">Username</label>
+                </div>
+
                 <div className="form-floating mb-3">
                     <input required type="email" className="form-control" id="email" placeholder="" 
                         onChange={(e)=>{
@@ -167,7 +176,7 @@ function Signup(){
                 </div>
                 <div className='form-floating mb-3 text-center'>
                     <button className='btn btn-primary' type='submit' onClick={signIn}> 
-                        <span className={`${SigninText}`}>Sign In</span>
+                        <span className={`${SigninText}`}>Sign Up</span>
                         <div className={`spinner-border spinner-border-sm text-light ${spinner}`} role="status">
                             <span className="visually-hidden">Loading...</span>
                         </div>

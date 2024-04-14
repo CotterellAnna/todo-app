@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logout from './Logout';
-import Header from './Header';
+import Greeting from './Greeting';
 import TodoForm from './TodoForm';
 import TodoList from './TodoList';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -20,12 +20,12 @@ function TodoApp() {
   return (
     <div className="App rounded container mx -auto my-3 p-2">
       <Logout />
-      <Header />
+      <Greeting />
       <TodoForm />
       <TodoList />
 
     </div>
   );
 }
-
+// displayName = {username} 
 export default TodoApp;

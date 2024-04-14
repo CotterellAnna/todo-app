@@ -38,7 +38,7 @@ function Logout(){
         
     };
 
-    return(
+    return( 
         <div className="d-flex justify-content-end">
             <button className='btn btn-primary' onClick={handleLogout}>Logout</button>
         </div>

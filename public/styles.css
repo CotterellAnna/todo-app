@@ -20,12 +20,13 @@ body{
     background-color: #DCE2EF;
 }
 
-.delete-btn-container{
+.action-btn{
     transition: transform 0.3s ease-in-out;
 }
 
-.delete-btn-container:hover{
+.action-btn:hover{
     transform: scale(1.2);
+    cursor: pointer;
 }
 
 input:focus{
