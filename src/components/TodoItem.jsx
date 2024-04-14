@@ -132,7 +132,7 @@ function TodoItem(props){
                         id={props.id}
                     />
                     <label
-                        className='mx-2'
+                        className='mx-2 col-10  h-auto text-wrap overflow-x-hidden'
                         htmlFor={props.id}
                         style={{ textDecoration: isChecked ? 'line-through' : 'none' }}
                     >
